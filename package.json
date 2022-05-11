@@ -1,0 +1,24 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "An app designed to view and manage deparments, roles, and employees in a company",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/supsha878/employee-tracker.git"
+  },
+  "author": "Supriya Sharma",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/supsha878/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/supsha878/employee-tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.4",
+    "mysql2": "^2.3.3"
+  }
+}
