@@ -1,6 +1,7 @@
 // import dependencies
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
+const cTable = require("console.table");
 
 const db = mysql.createConnection(
     {
@@ -23,7 +24,16 @@ function showOptions() {
             }
         ])
         .then((data) => {
-            console.log(data.option);
+            if (data.option === "view all departments") {
+                db.query(`SELECT * FROM department`, (err, result) => {
+                    if (err) {
+                        return;
+                    } else {
+                        console.table(result);
+                    }
+                });
+
+            }
         });
 }
 
@@ -33,41 +43,6 @@ function init() {
 
 init();
 
-
-// // connect to database
-// const db = mysql.createConnection(
-//     {
-//         host: "localhost",
-//         user: "root",
-//         password: "passwerd",
-//         database: "company_db"
-//     },
-//     console.log("connected to the company_db database")
-// )
-
-
-
-
-// // initialize app
-// function init() {
-//     inquirer
-//         .prompt([
-//             {
-//                 type: "list",
-//                 name: "action",
-//                 message: "Would you like to view, add, or update your information?",
-//                 choices: ["view", "add", "update"]
-//             }
-//         ])
-//         .then((data) => {
-//             console.log(data.action);
-//         });
-// }
-
-// function menu()
-
-// // call initialization
-// init();
 
 /*
 - add department
@@ -79,6 +54,7 @@ init();
 - view all employees
 - view employees by manager
 - view employees by department
+
 - view combined salaries of all employees in said department
 
 - update employee role
