@@ -26,12 +26,9 @@ function showActions() {
         }
     ])
     .then((data) => {
-        if (data.action === 'view all departments') {
-            handleViewDeparments();
-        } else if (data.action === 'view all roles') {
-            handleViewRoles();
-        } else if (data.action === 'view all employees') {
-            handleViewEmployees();
+        const actionIndex = choices.indexOf(data.action);
+        if (actionIndex < 3) {
+            handleViews(actionIndex);
         } else if (data.action === 'add a department') {
             handleAddDepartment();
         } else if (data.action === 'add a role') {
@@ -44,9 +41,13 @@ function showActions() {
     })
 }
 
-function handleViewDeparments() {}
-function handleViewRoles() {}
-function handleViewEmployees() {}
+function handleViews(index) {
+    db.promise().query(queries[index])
+    .then((result) => {
+        console.table(result[0]);
+        showActions();
+    });
+}
 
 function handleAddDepartment() {
     inquirer
@@ -58,12 +59,17 @@ function handleAddDepartment() {
         }
     ])
     .then((data) => {
-        console.log(`Added ${data.name} to the database`);
+        db.promise().query(queries[3], [data.name])
+        .then((result) => {
+            console.log(`Added ${data.name} to the database`);
+            showActions();
+        }); 
     });
 }
 
-function handleAddRole() {
-    const departments = ['choice']; // get departments
+async function handleAddRole() {
+    const departments = await getDepartments();
+    console.log(departments);
     inquirer
     .prompt([
         {
@@ -152,34 +158,27 @@ function handleUpdateEmpRole() {
     })
 }
 
+function getDepartments() {
+    const depts = [];
+    return db.promise().query(queries[7])
+    .then((result) => {
+        for (let i = 0; i < result[0].length;) {
+            depts.push(result[0][i].name);
+        }
+        return depts;
+    });
+}
+
+function getRoles() {}
+function getEmployees() {}
+
 function init() {
     showActions();
 }
 
 init();
 
-// // import dependencies
-// const inquirer = require("inquirer");
-// const cTable = require("console.table");
-// const queries = require("./lib/queries");
-// const queryNoParams = require("./lib/queries");
 
-// function showActions() {
-//     const choices = ["view all departments", "add a department", "view all roles", "add a role", "view all employees", "add an employee", "update an employee role"];
-//     inquirer
-//         .prompt([
-//             {
-//                 type: "list",
-//                 name: "action",
-//                 message: "What would you like to do?",
-//                 choices: choices
-//             }
-//         ])
-//         .then((data) => {
-//             const index = choices.indexOf(data.action);
-//             handleActions(index);
-//         })
-// }
 
 // function handleActions(index) {
 //     if (index === 0 || 2 || 4) {
@@ -193,40 +192,8 @@ init();
 //     showActions();
 // }
 
-// function init() {
-//     showActions();
-// }
-
-// init();
 
 
-
-
-
-
-// // function showActions() {
-// //     inquirer
-// //         .prompt([
-// //             {
-// //                 type: "list",
-// //                 name: "action",
-// //                 message: "What would you like to do?",
-// //                 choices: choices
-// //             }
-// //         ])
-// //         .then((data) => {
-// //             const actionType = data.action.substring(0, 1);
-// //             if (actionType === 'a') {
-// //                 handleAdds(data.action);
-// //             } else if (actionType === 'd') {
-// //                 handleDeletes(data.action);
-// //             } else if (actionType === 'u') {
-// //                 handleUpdates(data.action);
-// //             } else {
-// //                 handleViews(data.action);
-// //             }
-// //         });
-// // }
 
 // // function handleViews(action) {
 // //     let query;
@@ -240,14 +207,6 @@ init();
 // //         console.table(rows);
 // //         showActions();
 // //     });
-// // }
-
-// // function handleAdds(action) {
-// //     if (action === "add a department") {
-// //         addDepartment();
-// //     } else if (action === "add a role") {
-// //         addRole();
-// //     }
 // // }
 
 // // function addDepartment() {
@@ -299,31 +258,8 @@ init();
 // //         });
 // // }
 
-// // async function getDepartments() {
-// //     let promise = db.promise.query(queries[0]);
-// //     let result = await promise;
-// //     const depts = [];
-// //         for (let i = 0; i < result.length; i++) {
-// //             depts.push(result[i].name);
-// //         }
-// //     console.log(depts);
-// //     return depts;
 
-// //     // return (db.promise().query(queries[0])
-// //     // .then(([rows, fields]) => {
-// //     //     const depts = [];
-// //     //     for (let i = 0; i < rows.length; i++) {
-// //     //         depts.push(rows[i].name);
-// //     //     }
-// //     //     return depts;
-// //     // }));
-// // }
 
-// // function init() {
-// //     showActions();
-// // }
-
-// // init();
 
 
 // // /*
