@@ -6,10 +6,11 @@ const queries = require('./lib/queries');
 
 const db = mysql.createConnection(
     {
-        host: "localhost",
-        user: "root",
-        password: "passwerd",
-        database: "company_db"
+        host: 'localhost',
+        user: 'root',
+        password: 'passwerd',
+        database: 'company_db',
+        multipleStatements: 'true'
     },
     console.log(`Connected to the company_db database`)
 );
@@ -29,12 +30,8 @@ function showActions() {
         const actionIndex = choices.indexOf(data.action);
         if (actionIndex < 3) {
             handleViews(actionIndex);
-        } else if (data.action === 'add a department') {
-            handleAddDepartment();
-        } else if (data.action === 'add a role') {
-            handleAddRole();
-        } else if (data.action === 'add an employee') {
-            handleAddEmployee();
+        } else if (actionIndex >= 3 && actionIndex <= 5) {
+            handleAdds(actionIndex);
         } else if (data.action === 'update an employee role') {
             handleUpdateEmpRole();
         }
@@ -46,6 +43,37 @@ function handleViews(index) {
     .then((result) => {
         console.table(result[0]);
         showActions();
+    });
+}
+
+function handleAdds(index) {
+    if (index === 3) {
+        handleAddDepartment();
+    } else if  (index === 4) {
+        db.promise().query(queries[7])
+        .then((result) => {
+            let depts = result[0].map(dept => dept.name);
+            handleAddRole(depts);
+        });
+    } else if (index === 5) {
+        db.promise().query(`${queries[8]}; ${queries[9]}`)
+        .then((result) => {
+            let roles = result[0][0].map(role => role.title);
+            let employees = result[0][1].map(emp => emp.name);
+            handleAddEmployee(roles, employees);
+        });
+    }
+}
+
+// TODO remove
+function getDepartments() {
+    const depts = [];
+    return db.promise().query(queries[7])
+    .then((result) => {
+        for (let i = 0; i < result[0].length;) {
+            depts.push(result[0][i].name);
+        }
+        return depts;
     });
 }
 
@@ -67,9 +95,7 @@ function handleAddDepartment() {
     });
 }
 
-async function handleAddRole() {
-    const departments = await getDepartments();
-    console.log(departments);
+function handleAddRole(depts) {
     inquirer
     .prompt([
         {
@@ -86,19 +112,21 @@ async function handleAddRole() {
             type: 'list',
             name: 'department',
             message: 'Which department does the role belong to?',
-            choices: departments
+            choices: depts
         }
     ])
     .then((data) => {
-        let dept_id = departments.indexOf(data.department) + 1;
-        console.log([data.input, data.salary, dept_id]);
-        console.log(`Added ${data.title} to the database`)
+        let dept_id = depts.indexOf(data.department) + 1;
+        let params = [data.title, data.salary, dept_id];
+        db.promise().query(queries[4], params)
+        .then((result) => {
+            console.log(`Added ${data.title} to the database`);
+            showActions();
+        });
     });
 }
 
-function handleAddEmployee() {
-    const roles = ['roles']; // get roles
-    const employees = ['managers']; // get EMPLOYEES
+function handleAddEmployee(roles, employees) {
     inquirer
     .prompt([
         {
@@ -127,11 +155,16 @@ function handleAddEmployee() {
     .then((data) => {
         let role_id = roles.indexOf(data.role) + 1;
         let manager_id = employees.indexOf(data.manager) + 1;
-        console.log([data.first_name, data.last_name, role_id, manager_id]);
-        console.log(`Added ${data.first_name} ${data.last_name} to the database`);
+        let params = [data.first_name, data.last_name, role_id, manager_id];
+        db.promise().query(queries[5], params)
+        .then((result) => {
+            console.log(`Added ${data.first_name} ${data.last_name} to the database`);
+            showActions();
+        });
     });
 }
 
+// TODO
 function handleUpdateEmpRole() {
     const roles = ['roles']; // get roles
     const employees = ['managers']; // get EMPLOYEES
@@ -157,20 +190,6 @@ function handleUpdateEmpRole() {
         console.log('Updated employee\'s role');
     })
 }
-
-function getDepartments() {
-    const depts = [];
-    return db.promise().query(queries[7])
-    .then((result) => {
-        for (let i = 0; i < result[0].length;) {
-            depts.push(result[0][i].name);
-        }
-        return depts;
-    });
-}
-
-function getRoles() {}
-function getEmployees() {}
 
 function init() {
     showActions();
