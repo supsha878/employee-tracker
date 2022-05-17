@@ -2,7 +2,7 @@
 
 ## Description
 
-**Goal**: To create a command-line application to manage a database.
+**Goal**: To create a command-line application to manage a company database.
 
 This application is meant to help companies keep track of internal data. It builds an interactive content management system using Node.js and MySQL.
 
@@ -27,4 +27,4 @@ This application is meant to help companies keep track of internal data. It buil
 
 ## Deployment
 
-[Link to deployment video]()
+[Link to deployment video](https://youtu.be/mZ1x5zYz_7k)
