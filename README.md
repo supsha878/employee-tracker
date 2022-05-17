@@ -23,6 +23,7 @@ This application is meant to help companies keep track of internal data. It buil
 1. Create database schema and seeds to populate database
 1. Implement user interactions with inquirer
 1. Implement database queries to maintain database
+1. Implement promise-returning queries to deliver data
 
 ## Deployment
 

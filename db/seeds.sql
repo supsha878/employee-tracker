@@ -15,9 +15,9 @@ VALUES ("Brand Management", 75000, 1),
         ("Network Technician", 70000, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Matt", "Tress", 5, NULL),
+VALUES ("Matt", "Kirby", 5, NULL),
         ("Cathy", "Fuller", 3, NULL),
-        ("Adam", "Zapel", 7, NULL),
+        ("Adam", "Rahman", 7, NULL),
         ("Shelley", "Greenway", 2, NULL),
         ("Chloe", "Pham", 4, 2),
         ("Jared", "Richardson", 6, 1),
